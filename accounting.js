@@ -85,7 +85,9 @@
 		for (key in defs) {
 			if (defs.hasOwnProperty(key)) {
 				// Replace values with defaults only if undefined (allow empty/zero values):
-				if (object[key] == null) object[key] = defs[key];
+				if (key in object !== true) {
+					object[key] = defs[key];
+				}
 			}
 		}
 		return object;
@@ -124,11 +126,13 @@
 	/**
 	 * Parses a format string or object and returns format obj for use in rendering
 	 *
-	 * `format` is either a string with the default (positive) format, or object
-	 * containing `pos` (required), `neg` and `zero` values (or a function returning
-	 * either a string or object)
+	 * Parameters:
+	 * string				has "default positive format" must containe "%v"
+	 * object				has `pos` (required, must contain "%v"), `neg`, `zero` properties
+	 * function			has to return a string or object like what was passed
 	 *
-	 * Either string or format.pos must contain "%v" (value) to be valid
+	 * Returns:
+	 * object 			has `pos` (required, must contain "%v"), `neg`, `zero` properties
 	 */
 	function checkCurrencyFormat(format) {
 		var defaults = lib.settings.currency.format;
@@ -163,7 +167,7 @@
 
 
 	/* --- API Methods --- */
-	
+
 	/**
 	 * Takes a string/array of strings, removes all formatting/cruft and returns the raw float value
 	 * Alias: `accounting.parse(string)`
